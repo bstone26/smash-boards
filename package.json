@@ -1,0 +1,23 @@
+{
+  "name": "smash-boards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server":"nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bstone26/smash-boards.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bstone26/smash-boards/issues"
+  },
+  "homepage": "https://github.com/bstone26/smash-boards#readme",
+  "dependencies": {
+    "nodemon": "^1.19.1"
+  }
+}

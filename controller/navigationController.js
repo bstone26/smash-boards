@@ -1,6 +1,9 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var router = express.Router();
 var mongoose = require('mongoose');
+
+var urlencodedParser = bodyParser.urlencoded({extended: false});
 
 mongoose.connect('mongodb+srv://test:test@smashboards-wxzrm.mongodb.net/SmashBoards?retryWrites=true&w=majority', {useNewUrlParser: true});
 
@@ -127,5 +130,20 @@ router.get('/game/:id', function(req, res){
         res.render('game', {game:game});
     });
 });
-
+router.get('/addGame', urlencodedParser, function(req,res){
+    console.log(parseInt(req.query.numberOfPlayers));
+    res.render('addGame',{numberOfPlayers: parseInt(req.query.numberOfPlayers)});
+})
+router.post('/addGame', urlencodedParser, function(req, res){
+    console.log(req.body);
+    console.log("post recieved");
+    // var game1 = new Game({players:[{name:'Brian', character:"Pac-Man", kills:5, deaths:2, damageDone:123, damageTaken:97}],
+    // //     winner:"Brian"});
+    // //     console.log(game1.players)
+    // //     game1.save(function(err, game1){
+    // //         if(err) return console.error(err);
+    // //         else{console.log("Game Saved");}
+    // //     })
+    res.render('index');
+})
 module.exports = router;
