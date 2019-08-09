@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+             crossorigin="anonymous">
+    </head>
+    <body>
+        <% include partials/siteBanner %>
+        <% include partials/navBar%>
+        <table class = 'table'>
+            <th>Name</th>
+            <th>Character</th>
+            <th>Kills</th>
+            <th>Deaths</th>
+            <th>Damage Done</th>
+            <th>Damage Taken</th>
+            <%for(var i = 0; i < game.players.length; i++){ %>
+                <tr>
+                    <td><%=game.players[i].name%></td>
+                    <td><%=game.players[i].character%></td>
+                    <td><%=game.players[i].kills%></td>
+                    <td><%=game.players[i].deaths%></td>
+                    <td><%=game.players[i].damageDone%></td>
+                    <td><%=game.players[i].damageTaken%></td>
+                    <% if(game.players[i].name == (game.winner)){ %>
+                        <td><span class="badge badge-primary">Winner</span></td>
+                    <%}%>
+                    
+                </tr>
+                <% } %>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+            integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+             crossorigin="anonymous">
+    </head>
+    <body>
+        <% include partials/siteBanner %>
+        <% include partials/navbar %>
+        <table class='table'>
+            <th>Character</th>
+            <th>Kills</th>
+            <th>Games Played</th>
+            <th>Games Won</th>
+            <th>
+                    <div class="dropdown">
+                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Sort
+                            </a>
+                          
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                              <a class="dropdown-item" href="#">Action</a>
+                              <a class="dropdown-item" href="#">Another action</a>
+                              <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                          </div>
+            </th>
+            <% for(var i = 0; i < characters.length; i++){ %>
+                <tr>
+                    <td><a href="character/<%= characters[i]._id %>"><%= characters[i].name %></a></td>
+                    <td><%= characters[i].kills %></td>
+                    <td><%= characters[i].gamesPlayed %></td>
+                    <td><%= characters[i].gamesWon %></td>
+                </tr>
+            <% } %>
+        </table>
+    </body>
+</html>
