@@ -13,12 +13,19 @@
             
         </div>
         <form action="/addGame" method='POST'>
+            
             <div class = 'form-group'>
+                    <label for='map'>Map</label>
                     <select name='map'>
                             <option value='battlefield'>Battlefield</option>
                             <option value='finalDestination'>Final Destination</option>
                             <option value='other'>Other</option>
                         </select>
+                    <label for='winner'>Winner:</label>
+                    <input type='text' name='winner'>
+                    <label for='winningCharacter'>WinningCharacter:</label>
+                    <input type='text' name='winningCharacter'>
+                    <input type='hidden' name='numberOfPlayers' value='<%=numberOfPlayers%>'>
             </div>
             <% for(var i = 0; i < numberOfPlayers; i++){%>
                 <label for='player<%=i+1%>'>Player<%=i+1%></label>
@@ -29,6 +36,7 @@
                 <input type='text' name='player<%=i+1%>Kills'>
                 <label for='player<%=i+1%>'>Player<%=i+1%> Deaths</label>
                 <input type='text' name='player<%=i+1%>Deaths'>
+                <br>
             <%}%>
             
             <input type="submit" value="submit">

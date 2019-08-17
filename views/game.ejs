@@ -15,16 +15,13 @@
             <th>Character</th>
             <th>Kills</th>
             <th>Deaths</th>
-            <th>Damage Done</th>
-            <th>Damage Taken</th>
+            
             <%for(var i = 0; i < game.players.length; i++){ %>
                 <tr>
                     <td><%=game.players[i].name%></td>
                     <td><%=game.players[i].character%></td>
                     <td><%=game.players[i].kills%></td>
                     <td><%=game.players[i].deaths%></td>
-                    <td><%=game.players[i].damageDone%></td>
-                    <td><%=game.players[i].damageTaken%></td>
                     <% if(game.players[i].name == (game.winner)){ %>
                         <td><span class="badge badge-primary">Winner</span></td>
                     <%}%>
@@ -32,6 +29,6 @@
                 </tr>
                 <% } %>
         </table>
-        <h1><a href="/addGame">Add game</a></h1>
+        
     </body>
 </html>

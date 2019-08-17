@@ -8,9 +8,11 @@ var urlencodedParser = bodyParser.urlencoded({extended: false});
 mongoose.connect('mongodb+srv://test:test@smashboards-wxzrm.mongodb.net/SmashBoards?retryWrites=true&w=majority', {useNewUrlParser: true});
 
 var gameSchema = new mongoose.Schema({
-    players:[{name:String, character:String, kills:Number, deaths:Number, damageDone:Number, damageTaken:Number}],
+    players:[{name:String, character:String, kills:Number, deaths:Number}],
     winner:String,
-    winningCharacter:String
+    winningCharacter:String,
+    map:String,
+    numberOfPlayers:Number
 });
 var Game = new mongoose.model('Game', gameSchema);
 var userSchema = new mongoose.Schema({
@@ -133,17 +135,68 @@ router.get('/game/:id', function(req, res){
 router.get('/addGame', urlencodedParser, function(req,res){
     console.log(parseInt(req.query.numberOfPlayers));
     res.render('addGame',{numberOfPlayers: parseInt(req.query.numberOfPlayers)});
-})
+});
 router.post('/addGame', urlencodedParser, function(req, res){
     console.log(req.body);
     console.log("post recieved");
-    // var game1 = new Game({players:[{name:'Brian', character:"Pac-Man", kills:5, deaths:2, damageDone:123, damageTaken:97}],
-    // //     winner:"Brian"});
-    // //     console.log(game1.players)
-    // //     game1.save(function(err, game1){
-    // //         if(err) return console.error(err);
-    // //         else{console.log("Game Saved");}
-    // //     })
-    res.render('index');
-})
+    var values = Object.values(req.body);
+    console.log(values);
+    var players = [];
+    
+    for(var i = 4; i < values.length; i++){
+        if(i % 4 == 0){
+            var player = {name: '', character:'', kills: 0, deaths: 0};
+            player.name = values[i];
+        }
+        else if(i % 4 == 1){
+            player.character = values[i];
+        }
+        else if(i % 4 == 2){
+            player.kills = parseInt(values[i]);
+        }
+        else if(i % 4 == 3){
+            player.deaths = parseInt(values[i]);
+            players.push(player);
+        }
+        
+    }
+    var newGame = new Game({players: players, map: req.body.map, winner: req.body.winner, winningCharacter: req.body.winningCharacter, numberOfPlayers:parseInt(req.body.numberOfPlayers)});
+    console.log(newGame);
+    newGame.save(function(err, newGame){
+        if(err) return console.error(err);
+        else{
+            console.log('Game Saved');
+            updateUsers(newGame.players);
+            res.redirect('/gamesBoard');
+        }
+    });
+});
+router.post('/deleteGame', urlencodedParser, function(req,res){
+    console.log(req.body);
+    console.log(req.path);
+    Game.findById(req.body.gameId, function(err, game){
+            if (err) return console.error(err);
+            game.deleteOne();
+            res.redirect('/gamesBoard');
+        });
+    
+});
+function updateUsers(users){
+    console.log(users);
+    console.log(users[0].name);
+    console.log('******************');
+    for(var i = 0; i < users.length; i++){
+        updateUser(users[i]);
+    }
+};
+function updateUser(user){
+    User.findOne({name: user.name}, function(err,dbUser){
+        if (err) return console.error(err);
+        dbUser.kills += user.kills;
+        dbUser.gamesPlayed +=1;
+        dbUser.save(function(err){
+            if(err) return console.error(err);
+        })
+    });
+}
 module.exports = router;

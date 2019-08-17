@@ -30,10 +30,14 @@
             </th>
             <% for(var i = 0; i < games.length; i++){ %>
                 <tr>
-                    <td><a href="/game/<%=games[i]._id%>">BattleField</a></td>
+                    <td><a href="/game/<%=games[i]._id%>"><%=games[i].map%></a></td>
                     <td><%=games[i].winner%></td>
                     <td><%=games[i].winningCharacter%></td>
                     <td><%=games[i].players.length%></td>
+                    <td><form method="POST" action='/deleteGame'>
+                      <input type='hidden' name='gameId' value='<%=games[i]._id%>'>
+                      <input type='submit' value='Delete'>
+                    </form></td>
                 </tr>
                 <% } %>
         </table>
