@@ -10,31 +10,29 @@
         <% include partials/siteBanner %>
         <% include partials/navbar %>
         <table class='table'>
-            <th>Character</th>
-            <th>Kills</th>
-            <th>Games Played</th>
-            <th>Games Won</th>
-            <th>
-                    <div class="dropdown">
-                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Sort
-                            </a>
-                          
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                              <a class="dropdown-item" href="#">Action</a>
-                              <a class="dropdown-item" href="#">Another action</a>
-                              <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                          </div>
-            </th>
-            <% for(var i = 0; i < characters.length; i++){ %>
-                <tr>
-                    <td><a href="character/<%= characters[i]._id %>"><%= characters[i].name %></a></td>
-                    <td><%= characters[i].kills %></td>
-                    <td><%= characters[i].gamesPlayed %></td>
-                    <td><%= characters[i].gamesWon %></td>
-                </tr>
-            <% } %>
+          <% for(var i = 0; i < characters.length; i++){%>
+            <%if(i % 3 ==0){%><tr></tr><%}%>
+              <td><div class="card text-white bg-dark mb-3" style="width: 18rem;">
+                  <!-- <img src="..." class="card-img-top" alt="..."> -->
+                  <div class="card-body">
+                    <h5 class="card-title"><%=characters[i].name%></h5><br>
+                    <!-- <p class="card-text">Kills: <%=characters[i].kills%></p>
+                    <p class="card-text">Wins: <%=characters[i].gamesWon%></p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                    <table>
+                      <tr>
+                        <td>Kills: <%=characters[i].kills%></td>
+                        <td>Deaths: <%=characters[i].deaths%></td>
+                      </tr>
+                      <tr>
+                          <td>Games: <%=characters[i].gamesPlayed%></td>
+                          <td>Wins: <%=characters[i].gamesWon%></td>
+                        </tr>
+                    </table>
+                  </div>
+                </div></td>
+            
+          <%}%>
         </table>
     </body>
 </html>

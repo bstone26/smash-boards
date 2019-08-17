@@ -31,7 +31,12 @@
                 <label for='player<%=i+1%>'>Player<%=i+1%></label>
                 <input type='text' name='player<%=i+1%>'>
                 <label for='player<%=i+1%>'>Player<%=i+1%> Character</label>
-                <input type='text' name='player<%=i+1%>Character'>
+                
+                <select name='player<%=i+1%>Character'>
+                    <%for(var j = 0; j < allCharacters.length; j++){%>
+                        <option value='<%=allCharacters[j]%>'><%=allCharacters[j]%></option>
+                    <%}%>
+                </select>
                 <label for='player<%=i+1%>'>Player<%=i+1%> Kills</label>
                 <input type='text' name='player<%=i+1%>Kills'>
                 <label for='player<%=i+1%>'>Player<%=i+1%> Deaths</label>
