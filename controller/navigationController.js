@@ -21,7 +21,7 @@ var userSchema = new mongoose.Schema({
         deaths:Number,
         gamesPlayed:Number,
         gamesWon:Number,
-        charactersUsed:Array
+        charactersUsed:{}
     });
 var User = new mongoose.model('User', userSchema);
 var characterSchema = new mongoose.Schema({
@@ -29,7 +29,8 @@ var characterSchema = new mongoose.Schema({
     kills:Number,
     deaths:Number,
     gamesPlayed:Number,
-    gamesWon:Number
+    gamesWon:Number,
+    players:{}
 });
 var allCharacters =[];
 var Character = new mongoose.model('Character', characterSchema);
@@ -48,24 +49,12 @@ db.once('open', function(){
     });
     console.log('connected to Database');
 
-    // var pacman = new Character({name:"Samus", kills:0, gamesPlayed:0, gamesWon:0});
+    // var pacman = new Character({name:"Samus", kills:0, deaths:0 , gamesPlayed:0, gamesWon:0, players:{}});
     // pacman.save(function(err, pacman){
     //     if (err) return console.error(err);
     //     else{console.log(pacman.name + " Saved");}
     // });
-    // var Game = new mongoose.model('Game', gameSchema);
-    // var id = 0;
-    // Game.find(function (err, games){
-    //     if (err) return console.error(err);
-    //     console.log(games);
-    //     id = games[0]._id
-    //     console.log(id);
-    // });
-    // console.log(id);
-    // Game.findById(id, function(err, game){
-    //     if (err) return console.error(err);
-    //     console.log(game);
-    // });
+    
     // var game1 = new Game({players:[{name:'Brian', character:"Pac-Man", kills:5, deaths:2, damageDone:123, damageTaken:97}],
     //     winner:"Brian"});
     //     console.log(game1.players)
@@ -73,25 +62,14 @@ db.once('open', function(){
     //         if(err) return console.error(err);
     //         else{console.log("Game Saved");}
     //     })
-    // var smashSchema = new mongoose.Schema({
-    //     name:String,
-    //     kills:Number,
-    //     gamesPlayed:Number,
-    //     gamesWon:Number,
-    //     charactersUsed:Array
-    // });
-    // var User = new mongoose.model('User', userSchema);
-    // var brian = new User({name:"Eric", kills:0, gamesPlayed:0, gamesWon:0});
+    
+    // var brian = new User({name:"Brian", kills:0, gamesPlayed:0, gamesWon:0});
     // console.log(brian.name);
     // brian.save(function(err, brian){
     //     if (err) return console.error(err);
     //     else{console.log("Saved")}
     // });
-    // var pacman = new Character({name:"Pac-Man", kills:0, gamesPlayed:0, gamesWon:0});
-    // pacman.save(function(err, pacman){
-    //     if (err) return console.error(err);
-    //     else{console.log(pacman.name + " Saved");}
-    // });
+    
 });
 
 
@@ -111,7 +89,9 @@ router.get('/character/:id', function(req, res){
     Character.findById(req.params.id, function(err, character){
         if (err) return console.error(err);
         console.log(character.name);
-        res.render('character',{character:character});
+        var keys = Object.keys(character.players);
+        console.log(keys);
+        res.render('character',{character:character, keys:keys});
     });
     
 });
@@ -200,12 +180,37 @@ router.post('/deleteGame', urlencodedParser, function(req,res){
         });
     
 });
+router.post('/addUser', urlencodedParser, function(req,res){
+    console.log(req.body.username);
+    var user = new User({name: req.body.username, kills:0, deaths:0, gamesPlayed:0, gamesWon:0,charactersUsed:{}});
+    for(var i = 0 ; i < allCharacters.length; i++){
+        user.charactersUsed[allCharacters[i]]={kills:0,deaths:0,gamesPlayed:0,gamesWon:0};
+    }
+    user.save(function(err){
+        if (err) return console.error(err);
+        else{console.log("Saved")}
+        res.redirect('/usersBoard');
+    });
+    
+});
+router.post('/addCharacter', urlencodedParser, function(req,res){
+    console.log(req.body.characterName);
+    var character = new Character({name: req.body.characterName, kills:0, deaths:0, gamesPlayed:0, gamesWon:0, players:{Brian:{kills:0, deaths:0, gamesPlayed:0, gamesWon:0}}});
+    
+    character.save(function(err){
+        if (err) return console.error(err);
+        else{console.log("Saved")}
+        allCharacters.push(character.name);
+        res.redirect('/charactersBoard');
+    });
+    
+});
 function updateUsersAndCharacters(users, winner, winningCharacter){
     console.log(users);
     console.log('******************');
     for(var i = 0; i < users.length; i++){
-        updateUser(users[i]);
-        updateCharacter(users[i]);
+        updateUser(users[i], winningCharacter);
+        updateCharacter(users[i], winner);
     };
     User.findOne({name: winner}, function(err,dbUser){
         if (err) return console.error(err);
@@ -223,27 +228,59 @@ function updateUsersAndCharacters(users, winner, winningCharacter){
     });
 
 };
-function updateUser(user){
+function updateUser(user, winningCharacter){
     User.findOne({name: user.name}, function(err,dbUser){
         if (err) return console.error(err);
         dbUser.kills += user.kills;
         dbUser.deaths += user.deaths;
         dbUser.gamesPlayed +=1;
+        if(Object.keys(dbUser.charactersUsed).includes(user.name)){
+            dbUser.charactersUsed[user.character].kills += user.kills;
+            dbUser.charactersUsed[user.character].deaths += user.deaths;
+            dbUser.charactersUsed[user.character].gamesPlayed += 1;
+            console.log(dbUser.charactersUsed[user.character])
+            dbUser.markModified('charactersUsed');
+        }
+        else{
+            dbUser.charactersUsed[user.character] = {kills: user.kills, deaths: user.deaths, gamesPlayed: 1, gamesWon:0};
+            dbUser.markModified('charactersUsed');
+        }
+        if(user.character == winningCharacter){
+            dbUser.charactersUsed[user.character].gamesWon += 1;
+        }
         dbUser.save(function(err){
             if(err) return console.error(err);
         });
     });
 };
-function updateCharacter(player){
+function updateCharacter(player, winningUser){
     Character.findOne({name: player.character}, function(err, dbCharacter){
         if (err) return console.error(err);
         console.log(dbCharacter.name);
         dbCharacter.kills += player.kills;
         dbCharacter.deaths += player.deaths;
         dbCharacter.gamesPlayed += 1;
+        if(Object.keys(dbCharacter.players).includes(player.name)){
+            console.log('true');
+            dbCharacter.players[player.name].kills += player.kills;
+            dbCharacter.players[player.name].deaths += player.deaths;
+            dbCharacter.players[player.name].gamesPlayed += 1;
+            dbCharacter.markModified('players');
+        }
+        else{
+            console.log('false');
+            console.log(player.name);
+            dbCharacter.players[player.name] = {kills: player.kills, deaths: player.deaths, gamesPlayed: 1, gamesWon:0};
+            console.log(dbCharacter.players[player.name]);
+            dbCharacter.markModified('players');
+        }
+        if(player.name == winningUser){
+            dbCharacter.players[player.name].gamesWon += 1;
+        }
         dbCharacter.save(function(err){
             if(err) return console.error(err);
         });
     });
 }
+
 module.exports = router;

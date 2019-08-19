@@ -9,6 +9,22 @@
     <body>
         <% include partials/siteBanner %>
         <% include partials/navBar%>
-        
+        <p><%=character.name%></p>
+        <table class='table'>
+            <th>User</th>
+            <th>Kills</th>
+            <th>Deaths</th>
+            <th>Games Played</th>
+            <th>Games Won</th>
+            <% for(var i = 0; i < keys.length; i++){ %>
+                <tr>
+                    <td><%=keys[i]%></td>
+                    <td><%=character.players[keys[i]].kills%></td>
+                    <td><%=character.players[keys[i]].deaths%></td>
+                    <td><%=character.players[keys[i]].gamesPlayed%></td>
+                    <td><%=character.players[keys[i]].gamesWon%></td>
+                </tr>
+            <%}%>
+        </table>
     </body>
 </html>
