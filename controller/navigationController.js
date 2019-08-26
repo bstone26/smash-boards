@@ -180,6 +180,16 @@ router.post('/deleteGame', urlencodedParser, function(req,res){
         });
     
 });
+router.post('/deleteUser', urlencodedParser, function(req,res){
+    User.findById(req.body.userId, function(err, user){
+        if (err) return console.error(err);
+        user.remove(function(err){
+            if (err) return console.error(error);
+            res.redirect('/usersBoard');
+        })
+        
+    });
+});
 router.post('/addUser', urlencodedParser, function(req,res){
     console.log(req.body.username);
     var user = new User({name: req.body.username, kills:0, deaths:0, gamesPlayed:0, gamesWon:0,charactersUsed:{}});

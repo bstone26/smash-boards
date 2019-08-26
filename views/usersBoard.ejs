@@ -36,6 +36,10 @@
                     <td><%=users[i].gamesPlayed %></td>
                     <td><%=users[i].gamesWon %></td>
                     <td>NULL</td>
+                    <td><form method="POST" action='/deleteUser'>
+                      <input type='hidden' name='userId' value='<%=users[i]._id%>'>
+                      <input type='submit' value='Delete'>
+                    </form></td>
                 </tr>
                 <% } %>
             </table>
